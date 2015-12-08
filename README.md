@@ -21,7 +21,7 @@ Test::Consul - Run a Consul server for testing
 This module starts and stops a standalone Consul instance. It's designed to be
 used to help test Consul-aware Perl programs.
 
-It's assumed that you have Consul 0.5.2 installed somewhere.
+It's assumed that you have Consul 0.6.0 installed somewhere.
 
 # METHODS
 

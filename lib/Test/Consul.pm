@@ -24,17 +24,18 @@ sub start {
     my $datadir = $args{datadir} || '/tmp/perl-test-consul';
 
     my ($version) = qx{$bin version};
-    unless ($version && $version =~ m/Consul v0.5.2/) {
-        croak "consul not version 0.5.2";
+    unless ($version && $version =~ m/Consul v0.6.0/) {
+        croak "consul not version 0.6.0";
     }
 
     my $config = encode_json({
-        data_dir   => $datadir,
-        node_name  => 'perl-test-consul',
-        datacenter => 'perl-test-consul',
-        bootstrap  => JSON->true,
-        server     => JSON->true,
-        ports      => {
+        data_dir       => $datadir,
+        node_name      => 'perl-test-consul',
+        datacenter     => 'perl-test-consul',
+        bootstrap      => JSON->true,
+        server         => JSON->true,
+        advertise_addr => '127.0.0.1',
+        ports => {
             dns   => -1,
             http  => $port,
             https => -1,
@@ -129,7 +130,7 @@ Test::Consul - Run a Consul server for testing
 This module starts and stops a standalone Consul instance. It's designed to be
 used to help test Consul-aware Perl programs.
 
-It's assumed that you have Consul 0.5.2 installed somewhere.
+It's assumed that you have Consul 0.6.0 installed somewhere.
 
 =head1 METHODS
 
