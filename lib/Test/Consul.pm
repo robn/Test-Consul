@@ -107,6 +107,8 @@ sub datadir { shift->{datadir} }
 
 =encoding UTF-8
 
+=for markdown [![Build Status](https://secure.travis-ci.org/robn/Test-Consul.png)](http://travis-ci.org/robn/Test-Consul)
+
 =head1 NAME
 
 Test::Consul - Run a Consul server for testing
