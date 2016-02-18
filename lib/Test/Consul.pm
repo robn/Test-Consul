@@ -24,8 +24,8 @@ sub start {
     my $datadir = $args{datadir} || '/tmp/perl-test-consul';
 
     my ($version) = qx{$bin version};
-    unless ($version && $version =~ m/Consul v0.6.0/) {
-        croak "consul not version 0.6.0";
+    unless ($version && $version =~ m/Consul v0.6.3/) {
+        croak "consul not version 0.6.3";
     }
 
     my $config = encode_json({
@@ -132,7 +132,7 @@ Test::Consul - Run a Consul server for testing
 This module starts and stops a standalone Consul instance. It's designed to be
 used to help test Consul-aware Perl programs.
 
-It's assumed that you have Consul 0.6.0 installed somewhere.
+It's assumed that you have Consul 0.6.3 installed somewhere.
 
 =head1 METHODS
 
