@@ -36,14 +36,21 @@ useful:
 
 See more about this at L</skip_all_if_binary_unavailable>.
 
+=head1 LOGGING
+
+This module uses L<Log::Any> to log various information as the Consul agent changes
+state.  If you'd like to see the log output you could add this to your test scripts:
+
+    use Log::Any::Adapter 'TAP';
+
 =cut
 
 use Test::More qw();
-use Daemon::Daemonize qw( daemonize check_pidfile write_pidfile does_process_exist );
 use Net::EmptyPort qw( empty_port wait_port check_port );
 use IPC::Cmd qw();
 use Capture::Tiny qw( capture );
 use Carp qw( croak );
+use Log::Any qw( $log );
 use Time::HiRes qw();
 use POSIX qw( :sys_wait_h );
 use JSON::MaybeXS qw( encode_json );
@@ -90,7 +97,7 @@ has _destructor => (
 
         return sub{
             return if $$ != $build_pid;
-            return if !does_process_exist( $consul_pid );
+            return if !kill(0, $consul_pid);
 
             kill 'INT', $consul_pid;
 
@@ -101,7 +108,7 @@ has _destructor => (
             }
 
             croak "Timeout exceeded waiting for Consul agent with pid $consul_pid to stop"
-                if does_process_exist( $consul_pid );
+                if kill(0, $consul_pid);
         };
     },
 );
@@ -282,6 +289,7 @@ sub start {
     close $config_fh;
     push @$args, '-config-file' => $config_file;
 
+    $log->info('Starting Consul agent.');
     my $pid = fork();
 
     if (!$pid) {
@@ -294,13 +302,24 @@ sub start {
         };
     }
 
+    $log->info("Consul agent started with PID $pid.");
+    $log->infof('Ports are %s.',
+        join(', ',
+            map { "$_:$config->{ports}->{$_}" }
+            sort keys( %{ $config->{ports} } )
+        ),
+    );
+
     my $port = $config->{ports}->{http};
+    $log->info("Waiting for Consul agent to start listening on HTTP port $port.");
     wait_port( $port, $self->start_timeout() );
 
     unlink $config_file;
 
     croak "Timeout exceeded waiting for Consul agent with pid $pid to start listening on port $port"
         if !check_port( $port );
+
+    $log->info('Consul agent started.');
 
     $self->_consul_pid( $pid );
     $self->_config( $config );
@@ -322,6 +341,7 @@ sub stop {
         if !$self->is_running();
 
     my $pid = $self->_consul_pid();
+    $log->info("Stopping Consul agent with PID $pid.");
     kill 'INT', $pid;
 
     my $overtime = time() + $self->stop_timeout();
@@ -332,6 +352,8 @@ sub stop {
 
     croak "Timeout exceeded waiting for Consul agent with pid $pid to stop"
         if $self->is_running();
+
+    $log->info('Consul agent stopped.');
 
     $self->_consul_pid( undef );
     $self->_config( undef );
@@ -350,7 +372,7 @@ sub is_running {
     my $pid = $self->_consul_pid();
     return 0 if !$pid;
 
-    return( does_process_exist($pid) ? 1 : 0 );
+    return( kill(0, $pid) ? 1 : 0 );
 }
 
 1;

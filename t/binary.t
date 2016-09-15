@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 use Test2::Bundle::Extended;
+use Log::Any::Adapter 'TAP';
 use strictures 2;
 
 use Test::Consul;

@@ -36,6 +36,13 @@ useful:
 
 See more about this at L</skip_all_if_binary_unavailable>.
 
+=head1 LOGGING
+
+This module uses L<Log::Any> to log various information as the Consul agent changes
+state.  If you'd like to see the log output you could add this to your test scripts:
+
+    use Log::Any::Adapter 'TAP';
+
 =head1 ARGUMENTS
 
 =head2 start_timeout
