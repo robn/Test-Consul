@@ -2,7 +2,7 @@ package Test::Consul;
 
 =head1 NAME
 
-Test::Consul - Spawn a in-process Consul agent for testing.
+Test::Consul - Spawn an in-process Consul agent for testing.
 
 =head1 SYNOPSIS
 
@@ -21,9 +21,9 @@ This agent is configured to run in dev mode, meaning it writes nothing to disk, 
 all the ports it uses are set to available random ports.
 
 It is expected that the consul binary will be available and in the C<PATH> env, or
-otherwise executable from your shell as simple C<consul>.  If you have the Consul
+otherwise executable from your shell as simply C<consul>.  If you have the Consul
 binary installed somewhere else you can set the L</binary> argument (which also
-support being set by an env var).
+supports being set by an env var).
 
 When using this for tests you may find that following this workflow will be the most
 useful:
@@ -31,6 +31,7 @@ useful:
     use Test::More;
     my $consul = Test::Consul->new();
     $consul->skip_all_if_binary_unavailable();
+    $consul->start();
     # do your testing...
 
 See more about this at L</skip_all_if_binary_unavailable>.
