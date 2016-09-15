@@ -1,0 +1,113 @@
+=pod
+
+=head1 NAME
+
+Test::Consul - Spawn a in-process Consul agent for testing.
+
+=head1 SYNOPSIS
+
+    use Test::Consul;
+    
+    my $consul = Test::Consul->new();
+    $consul->start();
+    
+    my $url = $consul->api_v1_url() . '/agent/self';
+    my $port = $consul->http_port();
+
+=head1 DESCRIPTION
+
+This module provides a very simple and easy way to launch a per-test Consul agent.
+This agent is configured to run in dev mode, meaning it writes nothing to disk, and
+all the ports it uses are set to available random ports.
+
+It is expected that the consul binary will be available and in the C<PATH> env, or
+otherwise executable from your shell as simple C<consul>.  If you have the Consul
+binary installed somewhere else you can set the L</binary> argument (which also
+support being set by an env var).
+
+When using this for tests you may find that following this workflow will be the most
+useful:
+
+    use Test::More;
+    my $consul = Test::Consul->new();
+    $consul->skip_all_if_binary_unavailable();
+    # do your testing...
+
+See more about this at L</skip_all_if_binary_unavailable>.
+
+=head1 ARGUMENTS
+
+=head2 start_timeout
+
+How long to wait for the agent to start when L</start> is called.  Defaults
+to C<5> (seconds) which is well more than sufficient.
+
+=head2 stop_timeout
+
+How long to wait for the agent to stop when L</stop> is called.  Defaults
+to C<5> (seconds) which is well more than sufficient.
+
+=head2 binary
+
+The name of the consul binary, including its path if appropriate.
+Defaults to just C<consul>.
+
+The C<CONSUL_BINARY> env var may be used to change the default.
+
+=head1 ATTRIBUTES
+
+=head2 http_port
+
+The port Consul is listening to HTTP requests on.  If Consul is not running
+then this will throw an exception.
+
+=head2 http_url
+
+Returns the full URL to Consul's HTTP interface.  Throws an exception if
+Consul is not running.
+
+=head2 api_v1_url
+
+Returns the full URL to Consul's API v1 HTTP interface.  Throws an exception if
+Consul is not running.
+
+=head2 is_binary_available
+
+Returns true if the L</binary> is callable.
+
+=head1 METHODS
+
+=head2 skip_all_if_binary_unavailable
+
+Calls L<Test::More>'s C<skip_all> if L</is_binary_available> returns false.
+
+=head2 start
+
+Starts the Consul agent and returns once its L</http_port> starts listening.
+
+=head2 stop
+
+Stops the Consul agent.  Note that this isn't necessary to call in normal circumstances
+the agent will be automatically stop when the object goes out of scope or the process exits.
+
+=head2 is_running
+
+Returns true if L</start> has been called and the agent process is still running.
+
+=head1 AUTHOR
+
+Aran Clary Deltac <bluefeetE<64>gmail.com>
+
+=head1 ACKNOWLEDGEMENTS
+
+Thanks to L<ZipRecruiter|https://www.ziprecruiter.com/>
+for encouraging their employees to contribute back to the open
+source ecosystem.  Without their dedication to quality software
+development this distribution would not exist.
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
