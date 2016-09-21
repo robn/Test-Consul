@@ -17,7 +17,7 @@ use File::Temp qw( tempfile );
 sub start {
     my ($class, %args) = @_;
 
-    my $bin = $args{bin} || which "consul";
+    my $bin = $args{bin} || $class->bin();
     unless ($bin && -x $bin) {
         croak "can't find consul binary";
     }
@@ -119,8 +119,17 @@ sub DESTROY {
 sub running { !!shift->{_pid} }
 
 sub port    { shift->{port} }
-sub bin     { shift->{bin} }
 sub datadir { shift->{datadir} }
+
+my ($bin, $bin_searched_for);
+sub bin {
+  my ($self) = @_;
+  return $self->{bin} if ref $self;
+  return $bin if $bin_searched_for;
+  $bin = $ENV{CONSUL_BIN} || which "consul";
+  $bin_searched_for = 1;
+  return $bin;
+}
 
 1;
 
@@ -192,8 +201,8 @@ no datadir is used.
 
 C<bin>
 
-Location of the C<consul> binary. If not provided, C<$PATH> will be searched
-for it.
+Location of the C<consul> binary. If not provided, the C<CONSUL_BIN> env variable
+will be used, and if that is not set then C<$PATH> will be searched for it.
 
 =back
 

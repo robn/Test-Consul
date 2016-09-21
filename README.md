@@ -54,8 +54,8 @@ started.
 
 - `bin`
 
-    Location of the `consul` binary. If not provided, `$PATH` will be searched
-    for it.
+    Location of the `consul` binary. If not provided, the `CONSUL_BIN` env variable
+    will be used, and if that is not set then `$PATH` will be searched for it.
 
 ## end
 

@@ -1,4 +1,5 @@
 {{$NEXT}}
+ - Support setting the consul binary via the CONSUL_BIN env var.
  - Support running multiple Test::Consul instances at once.
  - Use the -dev option if datadir is not set.
 
