@@ -100,6 +100,19 @@ sub start {
     return bless $self, $class;
 }
 
+sub skip_all_if_no_bin {
+  my ($self) = @_;
+
+  croak 'The skip_all_if_no_bin method may only be used if the plan ' .
+        'function is callable on the main package (which Test::More ' .
+        'and Test2::Tools::Basic provide)'
+        if !main->can('plan');
+
+  return if $self->bin();
+
+  main::plan( skip_all => 'The Consul binary must be available to run this test.' );
+}
+
 sub end {
     my ($self) = @_;
     return unless $self->{_pid};
@@ -229,6 +242,13 @@ Returns the path to the C<consul> binary that was used to start the instance.
 =head2 datadir
 
 Returns the path to the data dir, if one was set.
+
+=head2 skip_all_if_no_bin
+
+    Test::Consul->skip_all_if_no_bin;
+
+This class method issues a C<skip_all> on the main package if the
+consul binary could not be found.
 
 =head1 SEE ALSO
 

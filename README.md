@@ -81,6 +81,13 @@ Returns the path to the `consul` binary that was used to start the instance.
 
 Returns the path to the data dir, if one was set.
 
+## skip\_all\_if\_no\_bin
+
+    Test::Consul->skip_all_if_no_bin;
+
+This class method issues a `skip_all` on the main package if the
+consul binary could not be found.
+
 # SEE ALSO
 
 - [Consul](https://metacpan.org/pod/Consul) - Consul client library. Uses [Test::Consul](https://metacpan.org/pod/Test::Consul) in its test suite.
