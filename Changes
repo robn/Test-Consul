@@ -1,4 +1,8 @@
 {{$NEXT}}
+ - Support Consul 0.7.0 by specifying the new performance
+   parameter so that test startup does not timeout.
+ - Loosen constraints on the Consul version so that all is required
+   is v0.6.1 or newer.
  - Added a skip_all_if_no_bin class method.
  - Support setting the consul binary via the CONSUL_BIN env var.
  - Support running multiple Test::Consul instances at once.

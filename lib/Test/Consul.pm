@@ -25,9 +25,17 @@ sub start {
     my $port    = $args{port}    || empty_port();
     my $datadir = $args{datadir};
 
+    # Make sure we have at least Consul 0.6.1 which supports the -dev option.
     my ($version) = qx{$bin version};
-    unless ($version && $version =~ m/Consul v0.6.4/) {
-        croak "consul not version 0.6.4";
+    if ($version and $version =~ m{v(\d+)\.(\d+)\.(\d+)}) {
+        $version = sprintf('%03d%03d%03d', $1, $2, $3);
+    }
+    else {
+        $version = 0;
+    }
+
+    unless ($version >= 6_001) {
+        croak "consul not version 0.6.1 or newer";
     }
 
     my @opts;
@@ -46,6 +54,13 @@ sub start {
             server   => empty_port(),
         },
     );
+
+    # Version 0.7.0 reduced default performance behaviors in a way
+    # that makese these tests slower to startup.  Override this and
+    # make leadership election happen ASAP.
+    if ($version >= 7_000) {
+        $config{performance} = { raft_multiplier => 1 };
+    }
 
     my $configpath;
     if (defined $datadir) {
@@ -78,7 +93,7 @@ sub start {
     my $http = HTTP::Tiny->new(timeout => 10);
     my $now = time;
     my $res;
-    while (time < $now+5) {
+    while (time < $now+10) {
         $res = $http->get("http://127.0.0.1:$port/v1/status/leader");
         last if $res->{success} && $res->{content} =~ m/^"[0-9\.]+:[0-9]+"$/;
         sleep 1;
