@@ -11,6 +11,8 @@ use Path::Tiny;
 use POSIX qw(WNOHANG);
 use Carp qw(croak);
 use HTTP::Tiny;
+use Net::EmptyPort qw( empty_port );
+use File::Temp qw( tempfile );
 
 sub start {
     my ($class, %args) = @_;
@@ -20,40 +22,57 @@ sub start {
         croak "can't find consul binary";
     }
 
-    my $port    = $args{port}    || int(rand(100))+28500;
-    my $datadir = $args{datadir} || '/tmp/perl-test-consul';
+    my $port    = $args{port}    || empty_port();
+    my $datadir = $args{datadir};
 
     my ($version) = qx{$bin version};
     unless ($version && $version =~ m/Consul v0.6.4/) {
         croak "consul not version 0.6.4";
     }
 
-    my $config = encode_json({
-        data_dir       => $datadir,
-        node_name      => 'perl-test-consul',
-        datacenter     => 'perl-test-consul',
-        bootstrap      => JSON->true,
-        server         => JSON->true,
-        advertise_addr => '127.0.0.1',
-        ports => {
-            dns   => -1,
-            http  => $port,
-            https => -1,
-        },
-    });
+    my @opts;
 
-    my $datapath = path($datadir);
-    $datapath->remove_tree;
-    $datapath->mkpath;
-    my $configpath = $datapath->child("consul.json");
-    $configpath->spew($config);
+    my %config = (
+        node_name  => 'perl-test-consul',
+        datacenter => 'perl-test-consul',
+        bind_addr  => '127.0.0.1',
+        ports => {
+            dns      => -1,
+            http     => $port,
+            https    => -1,
+            rpc      => empty_port(),
+            serf_lan => empty_port(),
+            serf_wan => empty_port(),
+            server   => empty_port(),
+        },
+    );
+
+    my $configpath;
+    if (defined $datadir) {
+        $config{data_dir}  = $datadir;
+        $config{bootstrap} = JSON->true;
+        $config{server}    = JSON->true;
+
+        my $datapath = path($datadir);
+        $datapath->remove_tree;
+        $datapath->mkpath;
+
+        $configpath = $datapath->child("consul.json");
+    }
+    else {
+      push @opts, '-dev';
+      $configpath = path( ( tempfile() )[1] );
+    }
+
+    $configpath->spew( encode_json(\%config) );
+    push @opts, '-config-file', "$configpath";
 
     my $pid = fork();
     unless (defined $pid) {
         croak "fork failed: $!";
     }
     unless ($pid) {
-        exec $bin, "agent", "-config-file=$configpath";
+        exec $bin, "agent", @opts;
     }
 
     my $http = HTTP::Tiny->new(timeout => 10);
@@ -68,6 +87,8 @@ sub start {
         kill 'KILL', $pid;
         croak "consul API test failed: $res->{status} $res->{reason}";
     }
+
+    unlink $configpath if !defined $datadir;
 
     my $self = {
         bin     => $bin,
@@ -157,15 +178,15 @@ C<start> takes the following arguments:
 
 C<port>
 
-Port for the HTTP service. If not provided, a port between 28500 and 28599
+Port for the HTTP service. If not provided, an unused port between 49152 and 65535
 (inclusive) is chosen at random.
 
 =item *
 
 C<datadir>
 
-Directory for Consul's datastore. If not provided, defaults to
-C</tmp/perl-test-consul>.
+Directory for Consul's datastore. If not provided, the C<-dev> option is used and
+no datadir is used.
 
 =item *
 
@@ -198,7 +219,7 @@ Returns the path to the C<consul> binary that was used to start the instance.
 
 =head2 datadir
 
-Returns the path to the data dir.
+Returns the path to the data dir, if one was set.
 
 =head1 SEE ALSO
 
@@ -234,6 +255,16 @@ L<https://github.com/robn/Consul-Test>
 =item *
 
 Robert Norris <rob@eatenbyagrue.org>
+
+=back
+
+=head1 CONTRIBUTORS
+
+=over 4
+
+=item *
+
+Aran Deltac <bluefeet@gmail.com>
 
 =back
 

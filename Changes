@@ -1,4 +1,6 @@
 {{$NEXT}}
+ - Support running multiple Test::Consul instances at once.
+ - Use the -dev option if datadir is not set.
 
 0.004     2016-03-29 21:44:20+11:00 Australia/Melbourne
  - Update for Consul 0.6.4

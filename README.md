@@ -44,13 +44,13 @@ started.
 
 - `port`
 
-    Port for the HTTP service. If not provided, a port between 28500 and 28599
+    Port for the HTTP service. If not provided, an unused port between 49152 and 65535
     (inclusive) is chosen at random.
 
 - `datadir`
 
-    Directory for Consul's datastore. If not provided, defaults to
-    `/tmp/perl-test-consul`.
+    Directory for Consul's datastore. If not provided, the `-dev` option is used and
+    no datadir is used.
 
 - `bin`
 
@@ -79,7 +79,7 @@ Returns the path to the `consul` binary that was used to start the instance.
 
 ## datadir
 
-Returns the path to the data dir.
+Returns the path to the data dir, if one was set.
 
 # SEE ALSO
 
@@ -105,6 +105,10 @@ public review and contribution under the terms of the license.
 # AUTHORS
 
 - Robert Norris <rob@eatenbyagrue.org>
+
+# CONTRIBUTORS
+
+- Aran Deltac <bluefeet@gmail.com>
 
 # COPYRIGHT AND LICENSE
 
