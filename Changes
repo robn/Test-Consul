@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.005     2016-09-22 21:18:37+10:00 Australia/Melbourne
  - Support Consul 0.7.0 by specifying the new performance
    parameter so that test startup does not timeout.
  - Loosen constraints on the Consul version so that all is required
