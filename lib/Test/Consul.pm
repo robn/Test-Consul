@@ -11,55 +11,89 @@ use Path::Tiny;
 use POSIX qw(WNOHANG);
 use Carp qw(croak);
 use HTTP::Tiny;
+use Net::EmptyPort qw( empty_port );
+use File::Temp qw( tempfile );
 
 sub start {
     my ($class, %args) = @_;
 
-    my $bin = $args{bin} || which "consul";
+    my $bin = $args{bin} || $class->bin();
     unless ($bin && -x $bin) {
         croak "can't find consul binary";
     }
 
-    my $port    = $args{port}    || int(rand(100))+28500;
-    my $datadir = $args{datadir} || '/tmp/perl-test-consul';
+    my $port    = $args{port}    || empty_port();
+    my $datadir = $args{datadir};
 
+    # Make sure we have at least Consul 0.6.1 which supports the -dev option.
     my ($version) = qx{$bin version};
-    unless ($version && $version =~ m/Consul v0.6.4/) {
-        croak "consul not version 0.6.4";
+    if ($version and $version =~ m{v(\d+)\.(\d+)\.(\d+)}) {
+        $version = sprintf('%03d%03d%03d', $1, $2, $3);
+    }
+    else {
+        $version = 0;
     }
 
-    my $config = encode_json({
-        data_dir       => $datadir,
-        node_name      => 'perl-test-consul',
-        datacenter     => 'perl-test-consul',
-        bootstrap      => JSON->true,
-        server         => JSON->true,
-        advertise_addr => '127.0.0.1',
-        ports => {
-            dns   => -1,
-            http  => $port,
-            https => -1,
-        },
-    });
+    unless ($version >= 6_001) {
+        croak "consul not version 0.6.1 or newer";
+    }
 
-    my $datapath = path($datadir);
-    $datapath->remove_tree;
-    $datapath->mkpath;
-    my $configpath = $datapath->child("consul.json");
-    $configpath->spew($config);
+    my @opts;
+
+    my %config = (
+        node_name  => 'perl-test-consul',
+        datacenter => 'perl-test-consul',
+        bind_addr  => '127.0.0.1',
+        ports => {
+            dns      => -1,
+            http     => $port,
+            https    => -1,
+            rpc      => empty_port(),
+            serf_lan => empty_port(),
+            serf_wan => empty_port(),
+            server   => empty_port(),
+        },
+    );
+
+    # Version 0.7.0 reduced default performance behaviors in a way
+    # that makese these tests slower to startup.  Override this and
+    # make leadership election happen ASAP.
+    if ($version >= 7_000) {
+        $config{performance} = { raft_multiplier => 1 };
+    }
+
+    my $configpath;
+    if (defined $datadir) {
+        $config{data_dir}  = $datadir;
+        $config{bootstrap} = JSON->true;
+        $config{server}    = JSON->true;
+
+        my $datapath = path($datadir);
+        $datapath->remove_tree;
+        $datapath->mkpath;
+
+        $configpath = $datapath->child("consul.json");
+    }
+    else {
+      push @opts, '-dev';
+      $configpath = path( ( tempfile() )[1] );
+    }
+
+    $configpath->spew( encode_json(\%config) );
+    push @opts, '-config-file', "$configpath";
 
     my $pid = fork();
     unless (defined $pid) {
         croak "fork failed: $!";
     }
     unless ($pid) {
-        exec $bin, "agent", "-config-file=$configpath";
+        exec $bin, "agent", @opts;
     }
 
     my $http = HTTP::Tiny->new(timeout => 10);
     my $now = time;
     my $res;
-    while (time < $now+5) {
+    while (time < $now+10) {
         $res = $http->get("http://127.0.0.1:$port/v1/status/leader");
         last if $res->{success} && $res->{content} =~ m/^"[0-9\.]+:[0-9]+"$/;
         sleep 1;
@@ -69,6 +103,8 @@ sub start {
         croak "consul API test failed: $res->{status} $res->{reason}";
     }
 
+    unlink $configpath if !defined $datadir;
+
     my $self = {
         bin     => $bin,
         port    => $port,
@@ -77,6 +113,19 @@ sub start {
     };
 
     return bless $self, $class;
+}
+
+sub skip_all_if_no_bin {
+  my ($self) = @_;
+
+  croak 'The skip_all_if_no_bin method may only be used if the plan ' .
+        'function is callable on the main package (which Test::More ' .
+        'and Test2::Tools::Basic provide)'
+        if !main->can('plan');
+
+  return if $self->bin();
+
+  main::plan( skip_all => 'The Consul binary must be available to run this test.' );
 }
 
 sub end {
@@ -98,8 +147,17 @@ sub DESTROY {
 sub running { !!shift->{_pid} }
 
 sub port    { shift->{port} }
-sub bin     { shift->{bin} }
 sub datadir { shift->{datadir} }
+
+my ($bin, $bin_searched_for);
+sub bin {
+  my ($self) = @_;
+  return $self->{bin} if ref $self;
+  return $bin if $bin_searched_for;
+  $bin = $ENV{CONSUL_BIN} || which "consul";
+  $bin_searched_for = 1;
+  return $bin;
+}
 
 1;
 
@@ -157,22 +215,22 @@ C<start> takes the following arguments:
 
 C<port>
 
-Port for the HTTP service. If not provided, a port between 28500 and 28599
+Port for the HTTP service. If not provided, an unused port between 49152 and 65535
 (inclusive) is chosen at random.
 
 =item *
 
 C<datadir>
 
-Directory for Consul's datastore. If not provided, defaults to
-C</tmp/perl-test-consul>.
+Directory for Consul's datastore. If not provided, the C<-dev> option is used and
+no datadir is used.
 
 =item *
 
 C<bin>
 
-Location of the C<consul> binary. If not provided, C<$PATH> will be searched
-for it.
+Location of the C<consul> binary. If not provided, the C<CONSUL_BIN> env variable
+will be used, and if that is not set then C<$PATH> will be searched for it.
 
 =back
 
@@ -198,7 +256,14 @@ Returns the path to the C<consul> binary that was used to start the instance.
 
 =head2 datadir
 
-Returns the path to the data dir.
+Returns the path to the data dir, if one was set.
+
+=head2 skip_all_if_no_bin
+
+    Test::Consul->skip_all_if_no_bin;
+
+This class method issues a C<skip_all> on the main package if the
+consul binary could not be found.
 
 =head1 SEE ALSO
 
@@ -234,6 +299,16 @@ L<https://github.com/robn/Consul-Test>
 =item *
 
 Robert Norris <rob@eatenbyagrue.org>
+
+=back
+
+=head1 CONTRIBUTORS
+
+=over 4
+
+=item *
+
+Aran Deltac <bluefeet@gmail.com>
 
 =back
 
