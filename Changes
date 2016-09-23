@@ -1,4 +1,9 @@
 {{$NEXT}}
+ - Ensure that each port, and each class instance, gets unique
+   free ports.  This avoids some random test failures.
+ - When assigning SERF ports makes sure that not only is TCP
+   available, but UDP as well.  Again, avoids random test
+   failures.
 
 0.005     2016-09-22 21:18:37+10:00 Australia/Melbourne
  - Support Consul 0.7.0 by specifying the new performance
