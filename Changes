@@ -4,6 +4,8 @@
  - When assigning SERF ports makes sure that not only is TCP
    available, but UDP as well.  Again, avoids random test
    failures.
+ - Increase the daemon start timeout from 10 to 30 seconds so
+   that 20-parallel.t can pass 100% even on my scrappy laptop.
 
 0.005     2016-09-22 21:18:37+10:00 Australia/Melbourne
  - Support Consul 0.7.0 by specifying the new performance

@@ -93,7 +93,7 @@ sub start {
     my $http = HTTP::Tiny->new(timeout => 10);
     my $now = time;
     my $res;
-    while (time < $now+10) {
+    while (time < $now+30) {
         $res = $http->get("http://127.0.0.1:$port/v1/status/leader");
         last if $res->{success} && $res->{content} =~ m/^"[0-9\.]+:[0-9]+"$/;
         sleep 1;
