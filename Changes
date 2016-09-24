@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.006     2016-09-24 14:26:19+10:00 Australia/Melbourne
  - Ensure that each port, and each class instance, gets unique
    free ports.  This avoids some random test failures.
  - When assigning SERF ports makes sure that not only is TCP
