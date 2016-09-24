@@ -11,7 +11,7 @@ use Path::Tiny;
 use POSIX qw(WNOHANG);
 use Carp qw(croak);
 use HTTP::Tiny;
-use Net::EmptyPort qw( empty_port );
+use Net::EmptyPort qw( check_port );
 use File::Temp qw( tempfile );
 
 sub start {
@@ -22,7 +22,7 @@ sub start {
         croak "can't find consul binary";
     }
 
-    my $port    = $args{port}    || empty_port();
+    my $port    = $args{port}    || _unique_empty_port();
     my $datadir = $args{datadir};
 
     # Make sure we have at least Consul 0.6.1 which supports the -dev option.
@@ -48,10 +48,10 @@ sub start {
             dns      => -1,
             http     => $port,
             https    => -1,
-            rpc      => empty_port(),
-            serf_lan => empty_port(),
-            serf_wan => empty_port(),
-            server   => empty_port(),
+            rpc      => _unique_empty_port(),
+            serf_lan => _unique_empty_port(1),
+            serf_wan => _unique_empty_port(1),
+            server   => _unique_empty_port(),
         },
     );
 
@@ -93,7 +93,7 @@ sub start {
     my $http = HTTP::Tiny->new(timeout => 10);
     my $now = time;
     my $res;
-    while (time < $now+10) {
+    while (time < $now+30) {
         $res = $http->get("http://127.0.0.1:$port/v1/status/leader");
         last if $res->{success} && $res->{content} =~ m/^"[0-9\.]+:[0-9]+"$/;
         sleep 1;
@@ -113,6 +113,25 @@ sub start {
     };
 
     return bless $self, $class;
+}
+
+my $start_port = 49152;
+my $current_port = $start_port;
+my $end_port  = 65535;
+
+sub _unique_empty_port {
+    my ($udp_too) = @_;
+
+    my $port = 0;
+    while ($port == 0) {
+      $current_port ++;
+      $current_port = $start_port if $current_port > $end_port;
+      next if check_port( undef, $current_port, 'tcp' );
+      next if $udp_too and check_port( undef, $current_port, 'udp' );
+      $port = $current_port;
+    }
+
+    return $port;
 }
 
 sub skip_all_if_no_bin {
