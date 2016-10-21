@@ -62,6 +62,15 @@ sub start {
         $config{performance} = { raft_multiplier => 1 };
     }
 
+    my $enable_acls        = $args{enable_acls};
+    my $acl_default_policy = $args{acl_default_policy} || 'allow';
+    if ($enable_acls) {
+        $config{acl_master_token} = $class->acl_master_token();
+        $config{acl_default_policy} = $acl_default_policy;
+        $config{acl_datacenter} = 'perl-test-consul';
+        $config{acl_token} = $class->acl_master_token();
+    }
+
     my $configpath;
     if (defined $datadir) {
         $config{data_dir}  = $datadir;
@@ -110,6 +119,8 @@ sub start {
         port    => $port,
         datadir => $datadir,
         _pid    => $pid,
+        enable_acls        => $enable_acls,
+        acl_default_policy => $acl_default_policy,
     };
 
     return bless $self, $class;
@@ -167,6 +178,10 @@ sub running { !!shift->{_pid} }
 
 sub port    { shift->{port} }
 sub datadir { shift->{datadir} }
+
+sub enable_acls        { shift->{enable_acls} }
+sub acl_default_policy { shift->{acl_default_policy} }
+sub acl_master_token   { '01234567-89AB-CDEF-GHIJ-KLMNOPQRSTUV' }
 
 my ($bin, $bin_searched_for);
 sub bin {
@@ -251,6 +266,20 @@ C<bin>
 Location of the C<consul> binary. If not provided, the C<CONSUL_BIN> env variable
 will be used, and if that is not set then C<$PATH> will be searched for it.
 
+=item *
+
+C<enable_acls>
+
+Set this to true to enable ACLs.
+
+=item *
+
+C<acl_default_policy>
+
+Set this to either C<allow> or C<deny>. The default is C<allow>.
+See L<https://www.consul.io/docs/agent/options.html#acl_default_policy> for more
+information.
+
 =back
 
 =head2 end
@@ -276,6 +305,19 @@ Returns the path to the C<consul> binary that was used to start the instance.
 =head2 datadir
 
 Returns the path to the data dir, if one was set.
+
+=head2 enable_acls
+
+Returns the C<enable_acls> argument which was set when L</start> was called.
+
+=head2 acl_default_policy
+
+Returns the C<acl_default_policy> argument which was set when L</start> was
+called.
+
+=head2 acl_master_token
+
+Returns the master ACL token.
 
 =head2 skip_all_if_no_bin
 

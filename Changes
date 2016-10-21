@@ -1,4 +1,7 @@
 {{$NEXT}}
+ - Add enable_acls and acl_default_policy arguments in
+   preparation for supporting the ACL API in the Consul
+   module.
 
 0.006     2016-09-24 14:26:19+10:00 Australia/Melbourne
  - Ensure that each port, and each class instance, gets unique
