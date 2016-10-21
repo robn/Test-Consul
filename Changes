@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.007     2016-10-21 17:06:01+11:00 Australia/Melbourne
  - Add enable_acls and acl_default_policy arguments in
    preparation for supporting the ACL API in the Consul
    module.
