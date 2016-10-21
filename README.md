@@ -57,6 +57,16 @@ started.
     Location of the `consul` binary. If not provided, the `CONSUL_BIN` env variable
     will be used, and if that is not set then `$PATH` will be searched for it.
 
+- `enable_acls`
+
+    Set this to true to enable ACLs.
+
+- `acl_default_policy`
+
+    Set this to either `allow` or `deny`. The default is `allow`.
+    See [https://www.consul.io/docs/agent/options.html#acl\_default\_policy](https://www.consul.io/docs/agent/options.html#acl_default_policy) for more
+    information.
+
 ## end
 
 Kill the Consul instance. Graceful shutdown is attempted first, and if it
@@ -80,6 +90,19 @@ Returns the path to the `consul` binary that was used to start the instance.
 ## datadir
 
 Returns the path to the data dir, if one was set.
+
+## enable\_acls
+
+Returns the `enable_acls` argument which was set when ["start"](#start) was called.
+
+## acl\_default\_policy
+
+Returns the `acl_default_policy` argument which was set when ["start"](#start) was
+called.
+
+## acl\_master\_token
+
+Returns the master ACL token.
 
 ## skip\_all\_if\_no\_bin
 
