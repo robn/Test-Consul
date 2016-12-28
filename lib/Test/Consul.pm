@@ -35,6 +35,8 @@ sub _unique_empty_port {
         $port = $current_port;
     }
 
+    # Make sure we return a scalar with just numeric data so it gets
+    # JSON encoded without quotes.
     return $port;
 }
 
@@ -155,12 +157,12 @@ sub start {
         bind_addr  => '127.0.0.1',
         ports => {
             dns      => -1,
-            http     => $self->port(),
+            http     => $self->port() + 0,
             https    => -1,
-            rpc      => $self->rpc_port(),
-            serf_lan => $self->serf_lan_port(),
-            serf_wan => $self->serf_wan_port(),
-            server   => $self->server_port(),
+            rpc      => $self->rpc_port() + 0,
+            serf_lan => $self->serf_lan_port() + 0,
+            serf_wan => $self->serf_wan_port() + 0,
+            server   => $self->server_port() + 0,
         },
     );
 
