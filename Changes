@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+0.008     2017-02-01 11:50:33+11:00 Australia/Melbourne
+ - Converted to a Moo class internally
+ - Allow ports to be specified by caller
+
 0.007     2016-10-21 17:06:01+11:00 Australia/Melbourne
  - Add enable_acls and acl_default_policy arguments in
    preparation for supporting the ACL API in the Consul
