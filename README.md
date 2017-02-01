@@ -25,91 +25,105 @@ used to help test Consul-aware Perl programs.
 
 It's assumed that you have Consul 0.6.4 installed somewhere.
 
+# ARGUMENTS
+
+## port
+
+The TCP port for HTTP API endpoint.  Consul's default is `8500`, but
+this defaults to a random unused port.
+
+## rpc\_port
+
+The TCP port for the RPC CLI endpoint.  Consul's default is `8400`, but
+this defaults to a random unused port.
+
+## serf\_lan\_port
+
+The TCP and UDP port for the Serf LAN.  Consul's default is `8301`, but
+this defaults to a random unused port.
+
+## serf\_wan\_port
+
+The TCP and UDP port for the Serf WAN.  Consul's default is `8302`, but
+this defaults to a random unused port.
+
+## server\_port
+
+The TCP port for the RPC Server address.  Consul's default is `8300`, but
+this defaults to a random unused port.
+
+## enable\_acls
+
+Set this to true to enable ACLs.
+
+## acl\_default\_policy
+
+Set this to either `allow` or `deny`. The default is `allow`.
+See [https://www.consul.io/docs/agent/options.html#acl\_default\_policy](https://www.consul.io/docs/agent/options.html#acl_default_policy) for more
+information.
+
+## acl\_master\_token
+
+If ["enable\_acls"](#enable_acls) is true then this token will be used as the master
+token.  By default this will be `01234567-89AB-CDEF-GHIJ-KLMNOPQRSTUV`.
+
+## bin
+
+Location of the `consul` binary.  If not provided then the binary will
+be retrieved from ["found\_bin"](#found_bin).
+
+## datadir
+
+Directory for Consul's data store. If not provided, the `-dev` option is used
+and no datadir is used.
+
+# ATTRIBUTES
+
+## running
+
+Returns `true` if ["start"](#start) has been called and ["stop"](#stop) has not been called.
+
 # METHODS
 
 ## start
 
-    my $tc = Test::Consul->start;
+    # As an object method:
+    my $tc = Test::Consul->new( %args );
+    $tc->start();
+    
+    # As a class method:
+    my $tc = Test::Consul->start( %args );
 
 Starts a Consul instance. This method can take a moment to run, because it
 waits until Consul's HTTP endpoint is available before returning. If it fails
 for any reason an exception is thrown. In this way you can be sure that Consul
 is ready for service if this method returns successfully.
 
-The returned object is a guard. `end` is called when it goes out of scope, so
-if you don't store it your Consul server will be killed before it even gets
-started.
+## stop
 
-`start` takes the following arguments:
-
-- `port`
-
-    Port for the HTTP service. If not provided, an unused port between 49152 and 65535
-    (inclusive) is chosen at random.
-
-- `datadir`
-
-    Directory for Consul's datastore. If not provided, the `-dev` option is used and
-    no datadir is used.
-
-- `bin`
-
-    Location of the `consul` binary. If not provided, the `CONSUL_BIN` env variable
-    will be used, and if that is not set then `$PATH` will be searched for it.
-
-- `enable_acls`
-
-    Set this to true to enable ACLs.
-
-- `acl_default_policy`
-
-    Set this to either `allow` or `deny`. The default is `allow`.
-    See [https://www.consul.io/docs/agent/options.html#acl\_default\_policy](https://www.consul.io/docs/agent/options.html#acl_default_policy) for more
-    information.
-
-## end
+    $tc->stop();
 
 Kill the Consul instance. Graceful shutdown is attempted first, and if it
 doesn't die within a couple of seconds, the process is killed.
 
-This method is also called if the guard object returned by `start` falls out
-of scope.
+This method is also called if the instance of this class falls out of scope.
 
-## running
+# CLASS METHODS
 
-Returns a true value if the Consul instance is running, false otherwise.
+See also ["start"](#start) which acts as both a class and instance method.
 
-## port
+## found\_bin
 
-Returns the port that the Consul's HTTP server is listening on.
-
-## bin
-
-Returns the path to the `consul` binary that was used to start the instance.
-
-## datadir
-
-Returns the path to the data dir, if one was set.
-
-## enable\_acls
-
-Returns the `enable_acls` argument which was set when ["start"](#start) was called.
-
-## acl\_default\_policy
-
-Returns the `acl_default_policy` argument which was set when ["start"](#start) was
-called.
-
-## acl\_master\_token
-
-Returns the master ACL token.
+Return the value of the `CONSUL_BIN` env var, if set, or uses [File::Which](https://metacpan.org/pod/File::Which)
+to search the system for an installed binary.  Returns `undef` if no consul
+binary could be found.
 
 ## skip\_all\_if\_no\_bin
 
     Test::Consul->skip_all_if_no_bin;
 
 This class method issues a `skip_all` on the main package if the
-consul binary could not be found.
+consul binary could not be found (["found\_bin"](#found_bin) returns false).
 
 # SEE ALSO
 
