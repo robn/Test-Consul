@@ -8,7 +8,7 @@ use ExtUtils::MakeMaker;
 
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Run a consul server for testing",
-  "AUTHOR" => "Robert Norris <rob\@eatenbyagrue.org>",
+  "AUTHOR" => "Rob N \x{2605} <robn\@robn.io>",
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },

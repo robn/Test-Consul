@@ -157,7 +157,7 @@ public review and contribution under the terms of the license.
 
 # AUTHORS
 
-- Robert Norris <rob@eatenbyagrue.org>
+- Rob N ★ <robn@robn.io>
 
 # CONTRIBUTORS
 
@@ -165,7 +165,8 @@ public review and contribution under the terms of the license.
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2015 by Robert Norris.
+This software is copyright (c) (c) 2015 by Rob N ★ and was supported by FastMail
+Pty Ltd.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
