@@ -1,4 +1,6 @@
 {{$NEXT}}
+ - wan_join method, connect multiple Consul instances together for
+   cross-datacenter applications
 
 0.008     2017-02-01 11:50:33+11:00 Australia/Melbourne
  - Converted to a Moo class internally

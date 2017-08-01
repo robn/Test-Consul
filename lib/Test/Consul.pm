@@ -2,6 +2,7 @@ package Test::Consul;
 
 # ABSTRACT: Run a consul server for testing
 
+use 5.010;
 use namespace::autoclean;
 
 use File::Which qw(which);
@@ -86,6 +87,16 @@ sub _build_server_port {
     return _unique_empty_port();
 }
 
+has datacenter => (
+    is  => 'lazy',
+    isa => NonEmptySimpleStr,
+);
+sub _build_datacenter {
+    state $dc_num = 0;
+    $dc_num++;
+    return "perl-test-consul-dc$dc_num";
+}
+
 has enable_acls => (
     is  => 'ro',
     isa => Bool,
@@ -153,7 +164,7 @@ sub start {
 
     my %config = (
         node_name  => 'perl-test-consul',
-        datacenter => 'perl-test-consul',
+        datacenter => $self->datacenter(),
         bind_addr  => '127.0.0.1',
         ports => {
             dns      => -1,
@@ -176,7 +187,7 @@ sub start {
     if ($self->enable_acls()) {
         $config{acl_master_token} = $self->acl_master_token();
         $config{acl_default_policy} = $self->acl_default_policy();
-        $config{acl_datacenter} = 'perl-test-consul';
+        $config{acl_datacenter} = $self->datacenter();
         $config{acl_token} = $self->acl_master_token();
     }
 
@@ -250,6 +261,19 @@ sub end {
 
 sub DESTROY {
     goto \&stop;
+}
+
+sub wan_join {
+    my ($self, $other) = @_;
+
+    my $http = HTTP::Tiny->new(timeout => 10);
+    my $port = $self->port;
+    my $other_wan_port = $other->serf_wan_port;
+
+    my $res = $http->get("http://127.0.0.1:$port/v1/agent/join/127.0.0.1:$other_wan_port?wan=1");
+    unless ($res->{success}) {
+        croak "WAN join failed: $res->{status} $res->{reason}"
+    }
 }
 
 my ($bin, $bin_searched_for);
@@ -388,6 +412,15 @@ Kill the Consul instance. Graceful shutdown is attempted first, and if it
 doesn't die within a couple of seconds, the process is killed.
 
 This method is also called if the instance of this class falls out of scope.
+
+=head2 wan_join
+
+    my $tc1 = Test::Consul->start;
+    my $tc2 = Test::Consul->start;
+    $tc1->wan_join($tc2);
+
+Perform a WAN join to another L<Test::Consul> instance. Use this to test Consul
+applications that operate across datacenters.
 
 =head1 CLASS METHODS
 
