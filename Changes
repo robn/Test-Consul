@@ -1,4 +1,5 @@
 {{$NEXT}}
+ - added enable_remote_exec, disabled by default since Consul 0.8.0
 
 0.010     2017-08-07 09:17:20+10:00 Australia/Melbourne
  - removed rpc_port, deprecated from Consul 0.9.0

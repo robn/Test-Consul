@@ -62,6 +62,10 @@ information.
 If ["enable\_acls"](#enable_acls) is true then this token will be used as the master
 token.  By default this will be `01234567-89AB-CDEF-GHIJ-KLMNOPQRSTUV`.
 
+## enable\_acls
+
+Set this to true to enable remote execution (off by default since Consul 0.8.0)
+
 ## bin
 
 Location of the `consul` binary.  If not provided then the binary will

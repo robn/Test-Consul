@@ -106,6 +106,11 @@ has acl_master_token => (
     default => '01234567-89AB-CDEF-GHIJ-KLMNOPQRSTUV',
 );
 
+has enable_remote_exec => (
+    is      => 'ro',
+    isa     => Bool,
+);
+
 has bin => (
     is => 'lazy',
     isa => NonEmptySimpleStr | Undef,
@@ -180,6 +185,10 @@ sub start {
         $config{acl_default_policy} = $self->acl_default_policy();
         $config{acl_datacenter} = $self->datacenter();
         $config{acl_token} = $self->acl_master_token();
+    }
+
+    if (defined $self->enable_remote_exec) {
+        $config{disable_remote_exec} = $self->enable_remote_exec ? JSON->false : JSON->true;
     }
 
     my $configpath;
@@ -357,6 +366,10 @@ information.
 
 If L</enable_acls> is true then this token will be used as the master
 token.  By default this will be C<01234567-89AB-CDEF-GHIJ-KLMNOPQRSTUV>.
+
+=head2 enable_acls
+
+Set this to true to enable remote execution (off by default since Consul 0.8.0)
 
 =head2 bin
 
