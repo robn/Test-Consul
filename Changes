@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.011     2017-08-07 09:39:39+10:00 Australia/Melbourne
  - added enable_remote_exec, disabled by default since Consul 0.8.0
 
 0.010     2017-08-07 09:17:20+10:00 Australia/Melbourne
