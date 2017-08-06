@@ -32,11 +32,6 @@ It's assumed that you have Consul 0.6.4 installed somewhere.
 The TCP port for HTTP API endpoint.  Consul's default is `8500`, but
 this defaults to a random unused port.
 
-## rpc\_port
-
-The TCP port for the RPC CLI endpoint.  Consul's default is `8400`, but
-this defaults to a random unused port.
-
 ## serf\_lan\_port
 
 The TCP and UDP port for the Serf LAN.  Consul's default is `8301`, but

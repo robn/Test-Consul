@@ -1,4 +1,5 @@
 {{$NEXT}}
+ - removed rpc_port, deprecated from Consul 0.9.0
 
 0.009     2017-08-01 22:28:20+10:00 Australia/Melbourne
  - wan_join method, connect multiple Consul instances together for

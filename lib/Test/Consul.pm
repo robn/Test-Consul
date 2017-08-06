@@ -55,14 +55,6 @@ sub _build_port {
     return _unique_empty_port();
 }
 
-has rpc_port => (
-    is  => 'lazy',
-    isa => PositiveInt,
-);
-sub _build_rpc_port {
-    return _unique_empty_port();
-}
-
 has serf_lan_port => ( 
     is  => 'lazy',
     isa => PositiveInt,
@@ -170,7 +162,6 @@ sub start {
             dns      => -1,
             http     => $self->port() + 0,
             https    => -1,
-            rpc      => $self->rpc_port() + 0,
             serf_lan => $self->serf_lan_port() + 0,
             serf_wan => $self->serf_wan_port() + 0,
             server   => $self->server_port() + 0,
@@ -335,11 +326,6 @@ It's assumed that you have Consul 0.6.4 installed somewhere.
 =head2 port
 
 The TCP port for HTTP API endpoint.  Consul's default is C<8500>, but
-this defaults to a random unused port.
-
-=head2 rpc_port
-
-The TCP port for the RPC CLI endpoint.  Consul's default is C<8400>, but
 this defaults to a random unused port.
 
 =head2 serf_lan_port
