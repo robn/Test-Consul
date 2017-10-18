@@ -205,7 +205,7 @@ sub start {
     }
     else {
       push @opts, '-dev';
-      $configpath = path( ( tempfile() )[1] );
+      $configpath = path( ( tempfile(SUFFIX => '.json') )[1] );
     }
 
     $configpath->spew( encode_json(\%config) );
