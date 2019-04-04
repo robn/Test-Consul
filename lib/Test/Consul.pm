@@ -180,6 +180,13 @@ sub start {
         $config{performance} = { raft_multiplier => 1 };
     }
 
+    # gRPC health checks were added 1.0.5, and in dev mode are enabled and bind
+    # to port 8502, which then clashes if you want to run up a second
+    # Test::Consul. Just disable it.
+    if ($version >= 1_000_005) {
+      $config{ports}{grpc} = -1;
+    }
+
     if ($self->enable_acls()) {
         $config{acl_master_token} = $self->acl_master_token();
         $config{acl_default_policy} = $self->acl_default_policy();
