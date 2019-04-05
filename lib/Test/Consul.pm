@@ -188,6 +188,10 @@ sub start {
     }
 
     if ($self->enable_acls()) {
+      if ($version >= 1_004_000) {
+        croak "ACLs not supported with Consul >= 1.4.0"
+      }
+
         $config{acl_master_token} = $self->acl_master_token();
         $config{acl_default_policy} = $self->acl_default_policy();
         $config{acl_datacenter} = $self->datacenter();
@@ -361,7 +365,10 @@ this defaults to a random unused port.
 
 =head2 enable_acls
 
-Set this to true to enable ACLs.
+Set this to true to enable ACLs. Note that Consul ACLs changed substantially in
+Consul 1.4, and L<Test::Consul> has not yet been updated to support them. If
+you try to enable them with Consul 1.4+, L<Test::Consul> will croak. See
+L<https://github.com/robn/Test-Consul/issues/7> for more info.
 
 =head2 acl_default_policy
 

@@ -49,7 +49,10 @@ this defaults to a random unused port.
 
 ## enable\_acls
 
-Set this to true to enable ACLs.
+Set this to true to enable ACLs. Note that Consul ACLs changed substantially in
+Consul 1.4, and [Test::Consul](https://metacpan.org/pod/Test::Consul) has not yet been updated to support them. If
+you try to enable them with Consul 1.4+, [Test::Consul](https://metacpan.org/pod/Test::Consul) will croak. See
+[https://github.com/robn/Test-Consul/issues/7](https://github.com/robn/Test-Consul/issues/7) for more info.
 
 ## acl\_default\_policy
 

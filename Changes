@@ -1,4 +1,5 @@
 {{$NEXT}}
+ - croak when enabling ACLs on Consul >= 1.4.0 (not currently supported)
  - support for Consul >= 1.0.5 (disable gRPC port)
 
 0.012     2017-10-18 22:30:21+11:00 Australia/Melbourne
