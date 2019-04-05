@@ -136,6 +136,19 @@ binary could be found.
 This class method issues a `skip_all` on the main package if the
 consul binary could not be found (["found\_bin"](#found_bin) returns false).
 
+## found\_version
+
+Return the version of the consul binary, by running the binary return by
+["found\_bin"](#found_bin) with the `version` argument. Returns 0 if the version can't be
+determined.
+
+## skip\_all\_unless\_version
+
+    Test::Consul->skip_all_unless_version($minver, [$maxver]);
+
+This class method issues a `skip_all` on the main package if the consul binary
+is not between `$minver` and `$maxvar` (exclusive).
+
 # SEE ALSO
 
 - [Consul](https://metacpan.org/pod/Consul) - Consul client library. Uses [Test::Consul](https://metacpan.org/pod/Test::Consul) in its test suite.

@@ -1,4 +1,5 @@
 {{$NEXT}}
+ - add find_version and skip_all_unless_version
  - croak when enabling ACLs on Consul >= 1.4.0 (not currently supported)
  - support for Consul >= 1.0.5 (disable gRPC port)
 
