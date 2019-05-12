@@ -411,6 +411,14 @@ this defaults to a random unused port.
 The TCP port for the RPC Server address.  Consul's default is C<8300>, but
 this defaults to a random unused port.
 
+=head2 node_name
+
+The name of this node. If not provided, one will be generated.
+
+=head2 datacenter
+
+The name of the datacenter. If not provided, one will be generated.
+
 =head2 enable_acls
 
 Set this to true to enable ACLs. Note that Consul ACLs changed substantially in
