@@ -79,6 +79,16 @@ sub _build_server_port {
     return _unique_empty_port();
 }
 
+has node_name => (
+    is  => 'lazy',
+    isa => NonEmptySimpleStr,
+);
+sub _build_node_name {
+    state $node_num = 0;
+    $node_num++;
+    return "tc_node$node_num";
+}
+
 has datacenter => (
     is  => 'lazy',
     isa => NonEmptySimpleStr,
@@ -86,7 +96,7 @@ has datacenter => (
 sub _build_datacenter {
     state $dc_num = 0;
     $dc_num++;
-    return "perl-test-consul-dc$dc_num";
+    return "tc_dc$dc_num";
 }
 
 has enable_acls => (
@@ -159,7 +169,7 @@ sub start {
     my @opts;
 
     my %config = (
-        node_name  => 'perl-test-consul',
+        node_name  => $self->node_name(),
         datacenter => $self->datacenter(),
         bind_addr  => '127.0.0.1',
         ports => {
