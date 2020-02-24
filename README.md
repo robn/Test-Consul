@@ -58,8 +58,8 @@ The name of the datacenter. If not provided, one will be generated.
 ## enable\_acls
 
 Set this to true to enable ACLs. Note that Consul ACLs changed substantially in
-Consul 1.4, and [Test::Consul](https://metacpan.org/pod/Test::Consul) has not yet been updated to support them. If
-you try to enable them with Consul 1.4+, [Test::Consul](https://metacpan.org/pod/Test::Consul) will croak. See
+Consul 1.4, and [Test::Consul](https://metacpan.org/pod/Test%3A%3AConsul) has not yet been updated to support them. If
+you try to enable them with Consul 1.4+, [Test::Consul](https://metacpan.org/pod/Test%3A%3AConsul) will croak. See
 [https://github.com/robn/Test-Consul/issues/7](https://github.com/robn/Test-Consul/issues/7) for more info.
 
 ## acl\_default\_policy
@@ -124,7 +124,7 @@ This method is also called if the instance of this class falls out of scope.
     my $tc2 = Test::Consul->start;
     $tc1->wan_join($tc2);
 
-Perform a WAN join to another [Test::Consul](https://metacpan.org/pod/Test::Consul) instance. Use this to test Consul
+Perform a WAN join to another [Test::Consul](https://metacpan.org/pod/Test%3A%3AConsul) instance. Use this to test Consul
 applications that operate across datacenters.
 
 # CLASS METHODS
@@ -133,7 +133,7 @@ See also ["start"](#start) which acts as both a class and instance method.
 
 ## found\_bin
 
-Return the value of the `CONSUL_BIN` env var, if set, or uses [File::Which](https://metacpan.org/pod/File::Which)
+Return the value of the `CONSUL_BIN` env var, if set, or uses [File::Which](https://metacpan.org/pod/File%3A%3AWhich)
 to search the system for an installed binary.  Returns `undef` if no consul
 binary could be found.
 
@@ -159,7 +159,7 @@ is not between `$minver` and `$maxvar` (exclusive).
 
 # SEE ALSO
 
-- [Consul](https://metacpan.org/pod/Consul) - Consul client library. Uses [Test::Consul](https://metacpan.org/pod/Test::Consul) in its test suite.
+- [Consul](https://metacpan.org/pod/Consul) - Consul client library. Uses [Test::Consul](https://metacpan.org/pod/Test%3A%3AConsul) in its test suite.
 
 # SUPPORT
 
