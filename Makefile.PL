@@ -13,13 +13,18 @@ my %WriteMakefileArgs = (
     "ExtUtils::MakeMaker" => 0
   },
   "DISTNAME" => "Test-Consul",
+  "EXE_FILES" => [
+    "bin/test-consul"
+  ],
   "LICENSE" => "perl",
   "MIN_PERL_VERSION" => "5.010",
   "NAME" => "Test::Consul",
   "PREREQ_PM" => {
     "Carp" => 0,
+    "Defined::KV" => 0,
     "File::Temp" => 0,
     "File::Which" => 0,
+    "Getopt::Long::Descriptive" => 0,
     "HTTP::Tiny" => "0.14.0",
     "JSON::MaybeXS" => 0,
     "Moo" => 0,
@@ -30,13 +35,13 @@ my %WriteMakefileArgs = (
     "Types::Common::Numeric" => 0,
     "Types::Common::String" => 0,
     "Types::Standard" => 0,
-    "namespace::autoclean" => 0
+    "namespace::autoclean" => 0,
+    "strict" => 0,
+    "warnings" => 0
   },
   "TEST_REQUIRES" => {
     "Test::Exception" => 0,
-    "Test::More" => 0,
-    "strict" => 0,
-    "warnings" => 0
+    "Test::More" => 0
   },
   "VERSION" => "0.015",
   "test" => {
@@ -47,8 +52,10 @@ my %WriteMakefileArgs = (
 
 my %FallbackPrereqs = (
   "Carp" => 0,
+  "Defined::KV" => 0,
   "File::Temp" => 0,
   "File::Which" => 0,
+  "Getopt::Long::Descriptive" => 0,
   "HTTP::Tiny" => "0.14.0",
   "JSON::MaybeXS" => 0,
   "Moo" => 0,
