@@ -14,6 +14,7 @@ use HTTP::Tiny v0.014;
 use Net::EmptyPort qw( check_port );
 use File::Temp qw( tempfile );
 use Scalar::Util qw( blessed );
+use Data::Random qw(rand_words);
 
 use Moo;
 use Types::Standard qw( Bool Enum Undef );
@@ -39,6 +40,11 @@ sub _unique_empty_port {
     # Make sure we return a scalar with just numeric data so it gets
     # JSON encoded without quotes.
     return $port;
+}
+
+sub _generate_name {
+    my ($wordcount) = @_;
+    join '-', map { lc } rand_words(size => $wordcount, shuffle => 1);
 }
 
 has _pid => (
@@ -84,9 +90,7 @@ has node_name => (
     isa => NonEmptySimpleStr,
 );
 sub _build_node_name {
-    state $node_num = 0;
-    $node_num++;
-    return "tc-node$node_num";
+    _generate_name(2)
 }
 
 has datacenter => (
@@ -94,9 +98,7 @@ has datacenter => (
     isa => NonEmptySimpleStr,
 );
 sub _build_datacenter {
-    state $dc_num = 0;
-    $dc_num++;
-    return "tc-dc$dc_num";
+    _generate_name(1)
 }
 
 has enable_acls => (

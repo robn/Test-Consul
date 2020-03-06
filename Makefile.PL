@@ -21,6 +21,7 @@ my %WriteMakefileArgs = (
   "NAME" => "Test::Consul",
   "PREREQ_PM" => {
     "Carp" => 0,
+    "Data::Random" => 0,
     "Defined::KV" => 0,
     "File::Temp" => 0,
     "File::Which" => 0,
@@ -52,6 +53,7 @@ my %WriteMakefileArgs = (
 
 my %FallbackPrereqs = (
   "Carp" => 0,
+  "Data::Random" => 0,
   "Defined::KV" => 0,
   "File::Temp" => 0,
   "File::Which" => 0,
