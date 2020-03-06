@@ -536,7 +536,7 @@ L<Consul> - Consul client library. Uses L<Test::Consul> in its test suite.
 =head2 Bugs / Feature Requests
 
 Please report any bugs or feature requests through the issue tracker
-at L<https://github.com/robn/Consul-Test/issues>.
+at L<https://github.com/robn/Test-Consul/issues>.
 You will be notified automatically of any progress on your issue.
 
 =head2 Source Code
@@ -544,9 +544,9 @@ You will be notified automatically of any progress on your issue.
 This is open source software. The code repository is available for
 public review and contribution under the terms of the license.
 
-L<https://github.com/robn/Consul-Test>
+L<https://github.com/robn/Test-Consul>
 
-  git clone https://github.com/robn/Consul-Test.git
+  git clone https://github.com/robn/Test-Consul.git
 
 =head1 AUTHORS
 
@@ -570,7 +570,7 @@ Aran Deltac <bluefeet@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) (c) 2015 by Rob N ★ and was supported by FastMail
+This software is copyright (c) 2015 by Rob N ★ and was supported by FastMail
 Pty Ltd.
 
 This is free software; you can redistribute it and/or modify it under
