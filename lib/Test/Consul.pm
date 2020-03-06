@@ -86,7 +86,7 @@ has node_name => (
 sub _build_node_name {
     state $node_num = 0;
     $node_num++;
-    return "tc_node$node_num";
+    return "tc-node$node_num";
 }
 
 has datacenter => (
@@ -96,7 +96,7 @@ has datacenter => (
 sub _build_datacenter {
     state $dc_num = 0;
     $dc_num++;
-    return "tc_dc$dc_num";
+    return "tc-dc$dc_num";
 }
 
 has enable_acls => (
