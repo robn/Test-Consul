@@ -118,6 +118,14 @@ doesn't die within a couple of seconds, the process is killed.
 
 This method is also called if the instance of this class falls out of scope.
 
+## join
+
+    my $tc1 = Test::Consul->start;
+    my $tc2 = Test::Consul->start(datacenter => $tc1);
+    $tc1->wan_join($tc2);
+
+Perform a join to another [Test::Consul](https://metacpan.org/pod/Test%3A%3AConsul) instance. Use this to test Consul applications that operate across nodes.
+
 ## wan\_join
 
     my $tc1 = Test::Consul->start;

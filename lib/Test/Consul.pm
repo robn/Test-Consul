@@ -285,6 +285,19 @@ sub DESTROY {
     goto \&stop;
 }
 
+sub join {
+    my ($self, $other) = @_;
+
+    my $http = HTTP::Tiny->new(timeout => 10);
+    my $port = $self->port;
+    my $other_lan_port = $other->serf_lan_port;
+
+    my $res = $http->put("http://127.0.0.1:$port/v1/agent/join/127.0.0.1:$other_lan_port");
+    unless ($res->{success}) {
+        croak "join failed: $res->{status} $res->{reason}"
+    }
+}
+
 sub wan_join {
     my ($self, $other) = @_;
 
@@ -483,6 +496,14 @@ Kill the Consul instance. Graceful shutdown is attempted first, and if it
 doesn't die within a couple of seconds, the process is killed.
 
 This method is also called if the instance of this class falls out of scope.
+
+=head2 join
+
+    my $tc1 = Test::Consul->start;
+    my $tc2 = Test::Consul->start(datacenter => $tc1);
+    $tc1->wan_join($tc2);
+
+Perform a join to another L<Test::Consul> instance. Use this to test Consul applications that operate across nodes.
 
 =head2 wan_join
 

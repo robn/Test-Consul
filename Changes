@@ -1,6 +1,7 @@
 {{$NEXT}}
  - add test-consul program
  - improve node and datacenter name generation
+ - join method, connect multiple Consul instances together for multi-node applications
 
 0.015     2020-02-24 22:09:12+11:00 Australia/Melbourne
  - bug fix: call Net::EmptyPort::check_port correctly
