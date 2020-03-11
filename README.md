@@ -98,11 +98,11 @@ Returns `true` if ["start"](#start) has been called and ["stop"](#stop) has not 
 ## start
 
     # As an object method:
-    my $tc = Test::Consul->new( %args );
+    my $tc = Test::Consul->new(%args);
     $tc->start();
     
     # As a class method:
-    my $tc = Test::Consul->start( %args );
+    my $tc = Test::Consul->start(%args);
 
 Starts a Consul instance. This method can take a moment to run, because it
 waits until Consul's HTTP endpoint is available before returning. If it fails
