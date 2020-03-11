@@ -13,16 +13,33 @@ my ($opt, $usage) = describe_options(
   [ 'port=i',       'port for HTTP API port', { default => 8500 } ],
   [ 'node=s',       'node name' ],
   [ 'datacenter=s', 'datacenter name' ],
+  [ 'cluster=i',    'start a cluster of N nodes', { default => 1 } ],
   [ 'help|h',       'print usage message and exit', { shortcircuit => 1 } ],
 );
 
 print $usage->text and exit if $opt->help;
 
-my $tc = Test::Consul->start(
-  defined_kv(port       => $opt->port),
-  defined_kv(node_name  => $opt->node),
-  defined_kv(datacenter => $opt->datacenter),
-);
+my $port = $opt->port;
+my $node_name = $opt->node;
+my $datacenter = $opt->datacenter;
+
+my @nodes;
+for (1..$opt->cluster) {
+  my $node = Test::Consul->start(
+    defined_kv(port       => $port),
+    defined_kv(node_name  => $node_name),
+    defined_kv(datacenter => $datacenter),
+  );
+
+  if (@nodes) {
+    $nodes[-1]->join($node);
+  }
+  push @nodes, $node;
+
+  undef $port;
+  undef $node_name;
+  $datacenter = $nodes[-1]->datacenter;
+}
 
 while (1) { sleep 86400 }
 
