@@ -198,6 +198,12 @@ sub start {
     $config{ports}{grpc} = -1;
   }
 
+  # Likewise for grpc above, 1.14.0 added grpc_tls which listens on 8503, and
+  # would clash with a second active Test::Consul
+  if ($self->version >= 1_014_000) {
+    $config{ports}{grpc_tls} = -1;
+  }
+
   if ($self->enable_acls()) {
     if ($self->version >= 1_004_000) {
     croak "ACLs not supported with Consul >= 1.4.0"
