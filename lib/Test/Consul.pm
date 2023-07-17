@@ -33,7 +33,9 @@ sub _unique_empty_port {
     $current_port ++;
     $current_port = $start_port if $current_port > $end_port;
     next if check_port($current_port, 'tcp');
+    next if ! can_bind('127.0.0.1', $current_port, 'tcp');
     next if $udp_too and check_port($current_port, 'udp');
+    next if $udp_too and (! can_bind('127.0.0.1', $current_port, 'udp'));
     $port = $current_port;
   }
 
