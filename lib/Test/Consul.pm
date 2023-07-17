@@ -11,7 +11,7 @@ use Path::Tiny;
 use POSIX qw(WNOHANG);
 use Carp qw(croak);
 use HTTP::Tiny v0.014;
-use Net::EmptyPort qw(check_port);
+use Net::EmptyPort qw(check_port can_bind);
 use File::Temp qw(tempfile);
 use Scalar::Util qw(blessed);
 use Data::Random qw(rand_words);
