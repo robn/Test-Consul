@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.017     2023-07-18 07:52:22+10:00 Australia/Melbourne
  - support for Consul >= 1.14.0 (disable gRPC TLS port)
  - try harder to find a local port to bind to
 
