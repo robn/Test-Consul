@@ -188,11 +188,12 @@ public review and contribution under the terms of the license.
 
 # AUTHORS
 
-- Rob N ★ <robn@robn.io>
+- Rob Norris <robn@despairlabs.com>
 
 # CONTRIBUTORS
 
 - Aran Deltac <bluefeet@gmail.com>
+- Matthew Horsfall <wolfsage@gmail.com>
 
 # COPYRIGHT AND LICENSE
 

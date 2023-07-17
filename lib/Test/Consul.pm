@@ -585,7 +585,7 @@ L<https://github.com/robn/Test-Consul>
 
 =item *
 
-Rob N ★ <robn@robn.io>
+Rob Norris <robn@despairlabs.com>
 
 =back
 
@@ -596,6 +596,10 @@ Rob N ★ <robn@robn.io>
 =item *
 
 Aran Deltac <bluefeet@gmail.com>
+
+=item *
+
+Matthew Horsfall <wolfsage@gmail.com>
 
 =back
 
